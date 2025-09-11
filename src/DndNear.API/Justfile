@@ -1,0 +1,38 @@
+# DndNear.API Justfile
+
+# Default recipe shows help
+default: help
+
+# Show available recipes
+@help:
+    just --list
+
+# Start development server
+serve:
+    @echo "Starting API server..."
+    dotnet run
+
+# Build the API
+build:
+    @echo "Building API..."
+    dotnet build
+
+# Clean the API
+clean:
+    @echo "Cleaning API..."
+    dotnet clean
+
+# Restore packages
+restore:
+    @echo "Restoring API packages..."
+    dotnet restore
+
+# Run with specific host/port
+serve-custom host port:
+    @echo "Starting API server on {{host}}:{{port}}..."
+    dotnet run --urls "http://0.0.0.0:{{port}}"
+
+# Watch mode (auto-reload on file changes)
+watch:
+    @echo "Starting API in watch mode..."
+    dotnet watch run

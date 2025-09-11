@@ -1,0 +1,38 @@
+# DndNear.Web Justfile
+
+# Default recipe shows help
+default: help
+
+# Show available recipes
+@help:
+    just --list
+
+# Start development server
+serve:
+    @echo "Starting Web server..."
+    dotnet run
+
+# Build the Web app
+build:
+    @echo "Building Web app..."
+    dotnet build
+
+# Clean the Web app
+clean:
+    @echo "Cleaning Web app..."
+    dotnet clean
+
+# Restore packages
+restore:
+    @echo "Restoring Web packages..."
+    dotnet restore
+
+# Run with specific host/port
+serve-custom host port:
+    @echo "Starting Web server on {{host}}:{{port}}..."
+    dotnet run --urls "http://0.0.0.0:{{port}}"
+
+# Watch mode (auto-reload on file changes)
+watch:
+    @echo "Starting Web app in watch mode..."
+    dotnet watch run
