@@ -16,6 +16,19 @@ services:
       - ./src/DndNear.API:/app/src/DndNear.API
       - ./src/DndNear.Shared:/app/src/DndNear.Shared
 
+  # Web Service
+  web:
+    build:
+      context: .
+      dockerfile: src/DndNear.Web/Dockerfile
+    container_name: dndnear-web
+    ports:
+      - "5001:80"
+    networks:
+      - dndnear-network
+    depends_on:
+      - api
+
 networks:
   dndnear-network:
     driver: bridge
