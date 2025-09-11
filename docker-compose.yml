@@ -1,0 +1,21 @@
+services:
+  # API Service
+  api:
+    build:
+      context: .
+      dockerfile: src/DndNear.API/Dockerfile
+    container_name: dndnear-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+    ports:
+      - "5000:5000"
+    networks:
+      - dndnear-network
+    volumes:
+      - ./src/DndNear.API:/app/src/DndNear.API
+      - ./src/DndNear.Shared:/app/src/DndNear.Shared
+
+networks:
+  dndnear-network:
+    driver: bridge
