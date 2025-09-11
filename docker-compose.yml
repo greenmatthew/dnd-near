@@ -1,4 +1,26 @@
 services:
+  # PostgreSQL Database Server
+  postgres:
+    image: postgres:16-alpine
+    container_name: dndnear-postgres
+    environment:
+      - POSTGRES_DB=dndnear
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - "5432:5432"
+    networks:
+      - dndnear-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d dndnear"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
   # API Service
   api:
     build:
@@ -8,6 +30,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=dndnear;Username=postgres;Password=postgres
     ports:
       - "5000:5000"
     networks:
@@ -15,6 +38,15 @@ services:
     volumes:
       - ./src/DndNear.API:/app/src/DndNear.API
       - ./src/DndNear.Shared:/app/src/DndNear.Shared
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   # Web Service
   web:
@@ -27,8 +59,18 @@ services:
     networks:
       - dndnear-network
     depends_on:
-      - api
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 networks:
   dndnear-network:
     driver: bridge
+
+volumes:
+  postgres_data:
